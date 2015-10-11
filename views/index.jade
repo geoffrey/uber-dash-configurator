@@ -1,0 +1,64 @@
+html(ng-app="uber-dash")
+  head
+    title="Uber Dash Configurator"
+    link(href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700", rel="stylesheet", type="text/css")
+    link(href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css", rel="stylesheet")
+    meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
+    meta(http-equiv="Content-Language", content="en-us")
+    meta(charset="utf-8")
+
+    meta(name="viewport", content="width=device-width, user-scalable=no, minimum-scale=1")
+
+    meta(name="apple-mobile-web-app-capable", content="yes")
+    meta(name="apple-mobile-web-app-status-bar-style", content="black")
+
+    meta(name="keywords", content="uber, amazon, dash")
+    meta(name="description", content="Uber Dash Configurator")
+    meta(name="author", content="Geoffrey Tisserand")
+    meta(name="copyright", content="Geoffrey Tisserand 2015")
+
+    link(rel="stylesheet", href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css")
+    link(rel="stylesheet", href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css")
+    link(rel="stylesheet", href="//api.mapbox.com/mapbox.js/v2.2.2/mapbox.css")
+
+
+    script(src="//code.jquery.com/jquery-1.11.3.min.js")
+    script(src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
+    script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js")
+    script(src="//api.mapbox.com/mapbox.js/v2.2.2/mapbox.js")
+
+    link(rel="shortcut icon", href="/favicon.ico")
+    link(rel="stylesheet", href="/css/main.css")
+
+  body(ng-controller="MainController")
+    .container-fluid
+      header.text-center
+        h1
+          b UBER
+          | DASH
+        h2 Get your ride with just a press of a button
+
+      .main
+        .text-center
+          button.btn.btn-lg.btn-default(ng-click="login()", ng-disabled="processing") Login in with <b>uber</b>
+
+        br
+        br
+        br
+        .col-md-6#map
+        .col-md-5
+          b config.js
+          br
+          br
+          pre.
+            module.exports = {
+              pickup_lat: {{ pickup_lat }},
+              pickup_lng: {{ pickup_lng }},
+              dropoff_lat: {{ dropoff_lat }},
+              dropoff_lng: {{ dropoff_lng }},
+              product_id: {{ product_id || 'Login first' }}
+            };
+
+      footer
+
+    script(src="/js/app.js")

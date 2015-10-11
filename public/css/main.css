@@ -1,0 +1,25 @@
+* {
+  box-sizing: bordedr-box;
+}
+
+body {
+  background-color: #0A0914;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #fff;
+}
+
+header {
+  margin-bottom: 50px;
+  color: #FEB14F;
+}
+
+header h1 b {
+  color: #16ACCF;
+}
+
+#map {
+  height: 600px;
+  margin: 5px;
+}

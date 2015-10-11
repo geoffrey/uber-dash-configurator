@@ -1,0 +1,31 @@
+{
+  "name": "uber-dash-configurator",
+  "version": "1.0.0",
+  "description": "Oauth with Uber to generate your dash button config file",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.13.3",
+    "jade": "^1.11.0",
+    "request": "^2.61.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server.js",
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geoffrey/uber-dash-configurator.git"
+  },
+  "keywords": [
+    "uber",
+    "dashbutton",
+    "amazon"
+  ],
+  "author": "Geoffrey Tisserand",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/geoffrey/uber-dash-configurator/issues"
+  },
+  "homepage": "https://github.com/geoffrey/uber-dash-configurator#readme"
+}
