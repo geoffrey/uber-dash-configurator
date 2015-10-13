@@ -9,23 +9,23 @@ module.exports = {
 
   login: function(req, res, next) {
     var url = 'https://login.uber.com/oauth/authorize';
-    url += '?scope=request profile&response_type=code';
-    url += '&client_id=' + config.uber.clientId;
-    console.log('Redirecting to', url);
+        url += '?scope=request profile&response_type=code';
+        url += '&client_id=' + config.uber.clientId;
+
     res.redirect(url);
   },
 
   callback: function(req, res, next) {
     var data = {
-      'client_id': config.uber.clientId,
-      'client_secret': config.uber.clientSecret,
-      'grant_type': 'authorization_code',
-      'redirect_uri': config.uber.redirectUri,
-      'code': req.query.code
+      client_id:     config.uber.clientId,
+      client_secret: config.uber.clientSecret,
+      grant_type:    'authorization_code',
+      redirect_uri:  config.uber.redirectUri,
+      code:          req.query.code
     };
 
     request.post({
-      url: 'https://login.uber.com/oauth/token',
+      url:  'https://login.uber.com/oauth/token',
       form: data,
     }, function(err, response, body) {
       if (!!err) {
@@ -37,7 +37,7 @@ module.exports = {
 
   getProducts: function getProducts(req, res, next) {
     var data =  {
-      'latitude': req.query.lat,
+      'latitude':  req.query.lat,
       'longitude': req.query.lng
     };
 
@@ -45,17 +45,14 @@ module.exports = {
       'Authorization': 'Bearer ' + req.query.token
     };
 
-    console.log('Requesting product list for', data);
-
     request.get({
-      url: 'https://api.uber.com/v1/products',
-      qs: data,
+      url:     'https://api.uber.com/v1/products',
+      qs:      data,
       headers: headers
     }, function(err, response, body) {
       if (!!err) {
         res.status(400).json({ error: err });
       }
-
       res.json(JSON.parse(body));
     });
   }
