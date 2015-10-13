@@ -60,15 +60,15 @@ function MainController($scope, $location, $http) {
     function setPickup() {
       var m = pickup.getLatLng();
       console.log('pickup', m);
-      $scope.pickup_lat = m.lat;
-      $scope.pickup_lng = m.lng;
+      $scope.start_latitude = m.lat;
+      $scope.start_longitude = m.lng;
     }
 
     function setDropoff() {
       var m = dropoff.getLatLng();
       console.log('dropoff', m);
-      $scope.dropoff_lat = m.lat;
-      $scope.dropoff_lng = m.lng;
+      $scope.end_latitude = m.lat;
+      $scope.end_longitude = m.lng;
     }
 
     setPickup();

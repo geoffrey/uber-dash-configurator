@@ -29,28 +29,23 @@ module.exports = {
       form: data,
     }, function(err, response, body) {
       if (!!err) {
-        return console.log('ERROR: Cannot login with Uber, try again!');
+        res.status(400).json({ error: err });
       }
-      console.log('Successfully logged in with Uber, you can now press your button anytime!')
-      body = JSON.parse(body);
-      TOKEN = body.access_token;
-      res.json(body);
+      res.json(JSON.parse(body));
     });
   },
 
   getProducts: function getProducts(req, res, next) {
-    if (!TOKEN) {
-      return console.log('Please login first! Visit http://localhost:3000/login');
-    }
-
     var data =  {
-      'latitude': config.start_latitude,
-      'longitude': config.start_longitude
+      'latitude': req.query.lat,
+      'longitude': req.query.lng
     };
 
     var headers = {
-      'Authorization': 'Bearer ' + TOKEN
+      'Authorization': 'Bearer ' + req.query.token
     };
+
+    console.log('Requesting product list for', data);
 
     request.get({
       url: 'https://api.uber.com/v1/products',
@@ -58,11 +53,10 @@ module.exports = {
       headers: headers
     }, function(err, response, body) {
       if (!!err) {
-        console.log('ERROR while getting the products list', err)
+        res.status(400).json({ error: err });
       }
-      if (res) {
-        res.json(JSON.parse(body));
-      }
+
+      res.json(JSON.parse(body));
     });
   }
 };
