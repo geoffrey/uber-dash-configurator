@@ -39,7 +39,7 @@ h3 {
   position: absolute;
   top: 360px;
   left: 0px;
-  height: 100%;
+  bottom: 0px;
   width: 100%;
   background-color: #fff;
   z-index: 9999;
