@@ -1,13 +1,23 @@
 uber-dash-configurator
 ===
 
-Simple utility to generate an `AWS Lambda script` to use with a `AWS IoT rule` connected to a new `Amazon Dash button`.
-The utility let you connect with Uber in order to get a `token`. It also let you choose a `pickup and a dropoff location` as well as the `product` you wish to order from your button.
-In order to not require dependencies and make the script more lean and easy to setup on AWS Lambda, I had to use node's `https` module to post requests to uber.
+Utility to generate personalized `AWS Lambda` scripts to use within `AWS IoT` rules setup for `Amazon Dash button` new generation.
+
+
+How does it works?
+===
+
+Simply go to [the hosted version](https://uber-dash-configurator.herokuapp.com) and login with Uber. 
+
+Follow the 4 simple steps in order to get your personalized runnable `AWS Lambda` script.
 
 
 Development
 ===
+
+
+Create an Uber application to allow Oauth and copy/paste the credentials in the `./config.js` file.
+
 ```
 npm install
 npm start
