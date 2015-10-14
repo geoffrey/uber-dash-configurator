@@ -1,27 +1,33 @@
 function MainController($scope, $location, $http) {
-  $scope.login = function() {
-    $scope.processing = true;
-    $http.get('/login')
-    .success(function() {
+  $scope.products = [];
 
-    })
-    .error(function() {
-
-    })
-    .finally(function() {
-      $scope.processing = false;
-    });
+  $scope.selectProduct = function(index) {
+    $scope.selectedProduct = $scope.products[index];
   };
 
-  $scope.getProducts = function() {
-    $http.get('/products')
-    .success(function() {
+  function getProducts() {
+    if (!$scope.TOKEN) {
+      return;
+    }
 
+    $http.get('/products', {
+      params: {
+        lat: $scope.start_latitude,
+        lng: $scope.start_longitude
+      },
+      headers: {
+        Authorization: 'Bearer ' + $scope.TOKEN,
+      }
     })
-    .error(function() {
-
+    .success(function(data) {
+      $scope.products = data.products;
+      if ($scope.products.length > 0) {
+        $scope.selectedProduct = $scope.products[0];
+      }
+      console.log('products:', data);
     })
-    .finally(function() {
+    .error(function(error) {
+      console.error(error);
     });
   };
 
@@ -59,14 +65,12 @@ function MainController($scope, $location, $http) {
 
     function setPickup() {
       var m = pickup.getLatLng();
-      console.log('pickup', m);
       $scope.start_latitude = m.lat;
       $scope.start_longitude = m.lng;
     }
 
     function setDropoff() {
       var m = dropoff.getLatLng();
-      console.log('dropoff', m);
       $scope.end_latitude = m.lat;
       $scope.end_longitude = m.lng;
     }
@@ -76,6 +80,8 @@ function MainController($scope, $location, $http) {
   }
 
   init();
+
+  $scope.$watchGroup(['TOKEN', 'start_latitude', 'start_longitude'], getProducts);
 }
 
 angular

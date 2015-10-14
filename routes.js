@@ -9,7 +9,7 @@ module.exports = {
 
   login: function(req, res, next) {
     var url = 'https://login.uber.com/oauth/authorize';
-        url += '?scope=request profile&response_type=code';
+        url += '?scope=request%20profile&response_type=code';
         url += '&client_id=' + config.uber.clientId;
 
     res.redirect(url);
@@ -29,20 +29,20 @@ module.exports = {
       form: data,
     }, function(err, response, body) {
       if (!!err) {
-        res.status(400).json({ error: err });
+        res.render('index');
       }
-      res.json(JSON.parse(body));
+      res.render('index', { token: JSON.parse(body).access_token });
     });
   },
 
-  getProducts: function getProducts(req, res, next) {
+  products: function(req, res, next) {
     var data =  {
       'latitude':  req.query.lat,
       'longitude': req.query.lng
     };
 
     var headers = {
-      'Authorization': 'Bearer ' + req.query.token
+      'Authorization': req.headers.authorization
     };
 
     request.get({

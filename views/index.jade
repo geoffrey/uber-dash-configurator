@@ -21,7 +21,6 @@ html(ng-app="uber-dash")
     link(rel="stylesheet", href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css")
     link(rel="stylesheet", href="//api.mapbox.com/mapbox.js/v2.2.2/mapbox.css")
 
-
     script(src="//code.jquery.com/jquery-1.11.3.min.js")
     script(src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
     script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js")
@@ -31,80 +30,113 @@ html(ng-app="uber-dash")
     link(rel="stylesheet", href="/css/main.css")
 
   body(ng-controller="MainController")
-    .container-fluid
+    .container-fluid(ng-init="TOKEN = #{JSON.stringify(token)}")
       header.text-center
         h1
           b UBER
           | DASH
-        h2 Get your ride with just a press of a button
+        h2 Get a ride with just a press of a button
 
-      .main
-        .text-center
-          button.btn.btn-lg.btn-default(ng-click="login()", ng-disabled="processing") Login in with <b>uber</b>
-
+        .text-center(ng-hide="TOKEN")
+          br
+          br
+          a.btn.btn-lg.btn-default(href="/login", ng-disabled="processing") 1. Login in with <b>UBER</b>
         br
-        br
-        br
-        .col-md-6#map
-        .col-md-5
-          p Copy the following automatically generated code into an AWS Lambda function. Create a new rule using this Lambda for your dash button.
-          pre.
-            var https = require('https');
+        iframe(src="https://ghbtns.com/github-btn.html?user=geoffrey&repo=uber-dash-configurator&type=star&count=true", frameborder="0", scrolling="0", width="160px", height="30px")
 
-            var CONFIG = {
-              uber_token: {{ uber_token }},
-              product_id: {{ product_id }},
-              start_latitude: {{ start_latitude }},
-              start_longitude: {{ start_longitude }},
-              end_latitude: {{ end_latitude }},
-              end_longitude: {{ end_longitude }},
-            };
+        a(href="https://github.com/geoffrey/uber-dash-configurator", target="_blank")
+          img(style="position: absolute; top: 0; right: 0; border: 0;", src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67", alt="Fork me on GitHub", data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png")
 
-            function callUber(event, context) {
-              var data =  {
-                product_id:      CONFIG.product_id,
-                start_latitude:  CONFIG.start_latitude,
-                start_longitude: CONFIG.start_longitude,
-                end_latitude:    CONFIG.end_latitude,
-                end_longitude:   CONFIG.end_longitude
+      .overlay(ng-hide="TOKEN")
+      .generator
+        .row
+        .row
+          .col-md-4
+            h3 2. Select your pickup/dropoff locations
+
+            p Drag and drop the 2 markers on the map
+            b.green green: pickup
+            br
+            b.red red: dropoff
+            br
+
+            #map
+
+          .col-md-3
+            h3 3. Select the product
+
+            b.red(ng-show="products.length === 0")
+              span(ng-show="TOKEN") Uber is not available at your pickup location!
+
+            .product(ng-cloak, ng-repeat="product in products", ng-click="selectProduct($index)", ng-class="product.product_id === selectedProduct.product_id ? 'selected' : ''")
+              .row
+                .col-md-3
+                  img(ng-src="{{ product.image }}")
+                .col-md-9
+                  b {{ product.display_name }}
+                  br
+                  span {{ product.description }}
+                  br
+                  span {{ product.capacity }} people
+                  br
+                  span ${{ product.price_details.minimum }} miniumum
+
+          .col-md-5
+            h3 4. Use the script
+            p Create a new AWS IoT rule for your button using this AWS Lambda script:
+
+            pre(ng-cloak).
+              var https = require('https');
+
+              var CONFIG = {
+                uber_token:      "{{ TOKEN }}",
+                product_id:      "{{ selectedProduct.product_id }}",
+                start_latitude:  {{ start_latitude }},
+                start_longitude: {{ start_longitude }},
+                end_latitude:    {{ end_latitude }},
+                end_longitude:   {{ end_longitude }},
               };
 
-              data = JSON.stringify(data);
+              function callUber(event, context) {
+                var data =  {
+                  product_id:      CONFIG.product_id,
+                  start_latitude:  CONFIG.start_latitude,
+                  start_longitude: CONFIG.start_longitude,
+                  end_latitude:    CONFIG.end_latitude,
+                  end_longitude:   CONFIG.end_longitude
+                };
 
-              var headers = {
-                'Authorization':  'Bearer ' + CONFIG.uber_token,
-                'Content-Type':   'application/json',
-                'Content-Length': Buffer.byteLength(data)
-              };
+                data = JSON.stringify(data);
 
-              var options = {
-                host:    'api.uber.com',
-                path:    '/v1/requests',
-                method:  'POST',
-                headers: headers
-              };
+                var headers = {
+                  'Authorization':  'Bearer ' + CONFIG.uber_token,
+                  'Content-Type':   'application/json',
+                  'Content-Length': Buffer.byteLength(data)
+                };
 
-              var req = https.request(options, function(res) {
-                if (res.statusCode == 200) {
-                  context.succeed(event);
-                } else if (context) {
-                  context.fail(event);
-                }
+                var options = {
+                  host:    'api.uber.com',
+                  path:    '/v1/requests',
+                  method:  'POST',
+                  headers: headers
+                };
 
-                res.on('data', function (chunk) {
-                  console.log("" + chunk);
+                var req = https.request(options, function(res) {
+                  if (res.statusCode == 200) {
+                    context.succeed(event);
+                  } else if (context) {
+                    context.fail(event);
+                  }
+
+                  res.on('data', function (chunk) {
+                    console.log("" + chunk);
+                  });
                 });
-              });
 
-              req.write(data);
-              req.end();
-            }
+                req.write(data);
+                req.end();
+              }
 
-            exports.handler = callUber;
-
-
-
-
-      footer
+              exports.handler = callUber;
 
     script(src="/js/app.js")
