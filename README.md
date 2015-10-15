@@ -1,13 +1,13 @@
 uber-dash-configurator
 ===
 
-Utility to generate personalized `AWS Lambda` scripts to use within `AWS IoT` rules setup for `Amazon Dash button` new generation.
+Utility to generate personalized `AWS Lambda` scripts to use within `AWS IoT` rules setup for the `AWS IoT Button`.
 
 
 How does it works?
 ===
 
-Simply go to [the hosted version](https://uber-dash-configurator.herokuapp.com) and login with Uber. 
+Simply go to [the hosted version](https://uber-dash-configurator.herokuapp.com) and login with Uber.
 
 Follow the 4 simple steps in order to get your personalized runnable `AWS Lambda` script.
 
