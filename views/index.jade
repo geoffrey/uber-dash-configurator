@@ -36,108 +36,111 @@ html(ng-app="uber-dash")
           b UBER
           | DASH
         h2 Get a ride with just a press of a button
-
-        .text-center(ng-hide="TOKEN")
-          br
-          br
-          a.btn.btn-lg.btn-default(href="/login", ng-disabled="processing") 1. Login in with <b>UBER</b>
+        br
+        a.btn.btn-lg.btn-default(href="https://medium.com/@geoffrey___/summon-uber-with-the-new-amazon-dash-button-876b54385dec" target="_blank")
+          b 0. Read the Medium post to know how it works
+        br
+        br
+        a.btn.btn-lg.btn-info(href="/login", ng-disabled="TOKEN") 1. Login in with <b>UBER</b>
+        br
         br
         iframe(src="//ghbtns.com/github-btn.html?user=geoffrey&repo=uber-dash-configurator&type=star&count=true", frameborder="0", scrolling="0", width="160px", height="30px")
 
         a(href="//github.com/geoffrey/uber-dash-configurator", target="_blank")
           img(style="position: absolute; top: 0; right: 0; border: 0;", src="//camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67", alt="Fork me on GitHub", data-canonical-src="//s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png")
 
-      .overlay(ng-hide="TOKEN")
-      .generator
-        .row
-        .row
-          .col-md-4
-            h3 2. Select your pickup & dropoff
+      .main-container
+        .overlay(ng-hide="TOKEN")
+        .generator
+          .row
+          .row
+            .col-md-4
+              h3 2. Select your pickup & dropoff
 
-            p Drag and drop the 2 markers on the map
-            b.green green: pickup
-            br
-            b.red red: dropoff
-            br
+              p Drag and drop the 2 markers on the map
+              b.green green: pickup
+              br
+              b.red red: dropoff
+              br
 
-            #map
+              #map
 
-          .col-md-3
-            h3 3. Select the product
+            .col-md-3
+              h3 3. Select the product
 
-            b.red(ng-show="products.length === 0")
-              span(ng-show="TOKEN") Uber is not available at your pickup location!
+              b.red(ng-show="products.length === 0")
+                span(ng-show="TOKEN") Uber is not available at your pickup location!
 
-            .product(ng-cloak, ng-repeat="product in products", ng-click="selectProduct($index)", ng-class="product.product_id === selectedProduct.product_id ? 'selected' : ''")
-              .row
-                .col-md-3
-                  img(ng-src="{{ product.image }}")
-                .col-md-9
-                  b {{ product.display_name }}
-                  br
-                  span {{ product.description }}
-                  br
-                  span {{ product.capacity }} people
-                  br
-                  span ${{ product.price_details.minimum }} miniumum
+              .product(ng-cloak, ng-repeat="product in products", ng-click="selectProduct($index)", ng-class="product.product_id === selectedProduct.product_id ? 'selected' : ''")
+                .row
+                  .col-md-3
+                    img(ng-src="{{ product.image }}")
+                  .col-md-9
+                    b {{ product.display_name }}
+                    br
+                    span {{ product.description }}
+                    br
+                    span {{ product.capacity }} people
+                    br
+                    span ${{ product.price_details.minimum }} miniumum
 
-          .col-md-5
-            h3 4. Save the script
-            p Create a new AWS IoT rule for your button using this personalized AWS Lambda script:
-            b.red DO NOT SHARE THIS! IT CONTAINS YOUR UBER TOKEN - WHICH ALLOW ANYONE TO ORDER RIDES ON YOUR BEHALF.
+            .col-md-5
+              h3 4. Save the script
+              p Create a new AWS IoT rule for your button using this personalized AWS Lambda script:
+              b.red DO NOT SHARE THIS! IT CONTAINS YOUR UBER TOKEN - WHICH ALLOW ANYONE TO ORDER RIDES ON YOUR BEHALF.
 
-            pre(ng-cloak).
-              var https = require('https');
+              pre(ng-cloak).
+                var https = require('https');
 
-              var CONFIG = {
-                uber_token:      "{{ TOKEN }}",
-                product_id:      "{{ selectedProduct.product_id }}",
-                start_latitude:  {{ start_latitude }},
-                start_longitude: {{ start_longitude }},
-                end_latitude:    {{ end_latitude }},
-                end_longitude:   {{ end_longitude }},
-              };
-
-              function callUber(event, context) {
-                var data =  {
-                  product_id:      CONFIG.product_id,
-                  start_latitude:  CONFIG.start_latitude,
-                  start_longitude: CONFIG.start_longitude,
-                  end_latitude:    CONFIG.end_latitude,
-                  end_longitude:   CONFIG.end_longitude
+                var CONFIG = {
+                  uber_token:      "{{ TOKEN }}",
+                  product_id:      "{{ selectedProduct.product_id }}",
+                  start_latitude:  {{ start_latitude }},
+                  start_longitude: {{ start_longitude }},
+                  end_latitude:    {{ end_latitude }},
+                  end_longitude:   {{ end_longitude }},
                 };
 
-                data = JSON.stringify(data);
+                function callUber(event, context) {
+                  var data =  {
+                    product_id:      CONFIG.product_id,
+                    start_latitude:  CONFIG.start_latitude,
+                    start_longitude: CONFIG.start_longitude,
+                    end_latitude:    CONFIG.end_latitude,
+                    end_longitude:   CONFIG.end_longitude
+                  };
 
-                var headers = {
-                  'Authorization':  'Bearer ' + CONFIG.uber_token,
-                  'Content-Type':   'application/json',
-                  'Content-Length': Buffer.byteLength(data)
-                };
+                  data = JSON.stringify(data);
 
-                var options = {
-                  host:    'api.uber.com',
-                  path:    '/v1/requests',
-                  method:  'POST',
-                  headers: headers
-                };
+                  var headers = {
+                    'Authorization':  'Bearer ' + CONFIG.uber_token,
+                    'Content-Type':   'application/json',
+                    'Content-Length': Buffer.byteLength(data)
+                  };
 
-                var req = https.request(options, function(res) {
-                  if (res.statusCode == 200) {
-                    context.succeed(event);
-                  } else if (context) {
-                    context.fail(event);
-                  }
+                  var options = {
+                    host:    'api.uber.com',
+                    path:    '/v1/requests',
+                    method:  'POST',
+                    headers: headers
+                  };
 
-                  res.on('data', function (chunk) {
-                    console.log("" + chunk);
+                  var req = https.request(options, function(res) {
+                    if (res.statusCode == 200) {
+                      context.succeed(event);
+                    } else if (context) {
+                      context.fail(event);
+                    }
+
+                    res.on('data', function (chunk) {
+                      console.log("" + chunk);
+                    });
                   });
-                });
 
-                req.write(data);
-                req.end();
-              }
+                  req.write(data);
+                  req.end();
+                }
 
-              exports.handler = callUber;
+                exports.handler = callUber;
 
     script(src="/js/app.js")

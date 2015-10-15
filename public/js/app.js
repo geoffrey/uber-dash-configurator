@@ -35,7 +35,8 @@ function MainController($scope, $location, $http) {
     L.mapbox.accessToken = 'pk.eyJ1IjoiZ2VvZmZyZXl0aXNzZXJhbmQiLCJhIjoiY2lmbHF0d2twMncwMXM2a3F1ODRraGdxaiJ9.wJk9as6xGHfCis8dyZQ2PA';
 
     var uberHQ = [37.775718, -122.418077];
-    var lyftHQ = [37.7603392,-122.4148612,17]; // troll
+    var lyftHQ = [37.7603392,-122.4148612];
+
     var MAP = L.mapbox
       .map('map', 'mapbox.streets')
       .setView(uberHQ, 13)
